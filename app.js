@@ -81,35 +81,19 @@ app.post(
     check("email", "Email tidak valid!").isEmail(),
     check("nohp", "Nomon HP tidak valid!").isMobilePhone("id-ID"),
   ],
-  async (req, res) => {
+  (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      // return res.status(400).json({ errors: errors.array() });
       res.render("add-contact", {
         layout: "layouts/main-layout",
         title: "Form Tambah Contact",
         errors: errors.array(),
       });
     } else {
-      // Contact.insertMany(req.body, (error, result) => {
-      //   if (error) {
-      //     console.log(error);
-      //     return res
-      //       .status(500)
-      //       .send("Terjadi kesalahan dalam menyimpan data.");
-      //   }
-      //   req.flash("msg", "Data Contact berhasil ditambahkan!");
-      //   res.redirect("/contact");
-      // });
-      try {
-        const newContact = new Contact(req.body);
-        await newContact.save();
-        req.flash("msg", "Data Contact berhasil ditambahkan!");
+      Contact.insertMany(req.body).then((result) => {
+        req.flash("msg", "Data Contact berhasil dihapus!");
         res.redirect("/contact");
-      } catch (error) {
-        console.log(error);
-        return res.status(500).send("Terjadi kesalahan dalam menyimpan data.");
-      }
+      });
     }
   }
 );
